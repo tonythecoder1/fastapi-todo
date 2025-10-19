@@ -8,8 +8,7 @@ from pathlib import Path
 from routers.auth import SECRET_KEY, ALGORITHM
 from fastapi.responses import RedirectResponse
 from fastapi import status
-from jose import JWTError
-import jwt
+from jose import JWTError, jwt
 from routers.auth import get_current_user_silent
 
 

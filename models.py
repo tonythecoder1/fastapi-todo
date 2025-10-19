@@ -1,7 +1,6 @@
 from pydantic import BaseModel
 from database import Base
 import sqlalchemy as sa
-
 import sqlalchemy as sa
 from database import Base
 
