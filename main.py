@@ -10,6 +10,8 @@ from fastapi.responses import RedirectResponse
 from fastapi import status
 from jose import JWTError, jwt
 from routers.auth import get_current_user_silent
+import os
+import uvicorn
 
 
 from database import engine, Base
@@ -99,3 +101,9 @@ app.include_router(users.router)
 async def on_startup():
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        
+
+if __name__ == "__main__":
+    # Usa PORT do ambiente (Koyeb) ou 10000 localmente
+    port = int(os.getenv("PORT", 10000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
