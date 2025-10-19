@@ -52,7 +52,7 @@
     <script>
 
       async function get_dados() {
-          const response = await fetch('http://127.0.0.1:8000/todos/get-all');
+          const response = await fetch('/todos/get-all', { credentials: 'same-origin' });
           const data = await response.json();
           return data;
       }
@@ -101,4 +101,6 @@
   {% else %}
     <h2>Faz agora o Login!</h2>
   {% endif %}
+
+  
 {% endblock %}
