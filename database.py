@@ -1,8 +1,6 @@
 import os
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
-import re
-
 
 #DATABASE_URL = "postgresql+asyncpg://postgres:12345678@localhost:5432/todo"
 
