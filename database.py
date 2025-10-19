@@ -10,12 +10,16 @@ import re
 
 DATABASE_URL = (
     "postgresql+asyncpg://postgres.wghpvhftdrrkfrnhzkfp:Tonyfiby16"
-    "@aws-1-us-east-2.pooler.supabase.com:5432/postgres?sslmode=require"
+    "@aws-1-us-east-2.pooler.supabase.com:5432/postgres"
 )
 
 engine = create_async_engine(
     DATABASE_URL,
-    echo=True
+    connect_args={"ssl": True},  
+    pool_pre_ping=True,
+    pool_size=5,
+    max_overflow=5,
+    echo=False,                   
 )
 
 AsyncSessionLocal = sessionmaker(
