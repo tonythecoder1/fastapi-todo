@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}Início{% endblock %}
+
+<script src="path/to/chartjs/dist/chart.umd.min.js"></script>
+
+{% block content %}
+  {% if user %}
+    <h1>Bem-vindo!</h1>
+    <p>Olá <strong>{{ user.username }}</strong> !! (função: {{ user.role }})</p>
+
+    <a href="{{ url_for('todos_page') }}"
+        style="
+            display:inline-block;
+            padding:10px 20px;
+            background-color: darkorange;
+            color: rgb(255, 255, 255);
+            text-decoration:none;
+            border-radius:8px;
+            font-weight:500;
+            transition:background 0.2s;
+        ">
+        Ver Tarefas
+    </a>
+
+    <br>
+    <br>
+    <br>
+
+<div style="
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+    border: 3px solid white;   
+    border-radius: 15px;            
+    padding: 20px;
+    width: fit-content;
+    margin-right: auto;
+    margin-top: 20px;
+    box-shadow: 4px 4px 15px rgba(0,0,0,0.3);
+    background-color: #fff8f0;
+">
+  <p style="margin:0;"><strong>Estado das tarefas: </strong></p>
+  <div style="width: 400px; height: 300px;">
+    <canvas id="acquisitions"></canvas>
+  </div>
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <script>
+
+      async function get_dados() {
+          const response = await fetch('http://127.0.0.1:8000/todos/get-all');
+          const data = await response.json();
+          return data;
+      }
+        
+       (async function() {
+        try {
+          const raw = await get_dados();
+          console.log("Dados recebidos:", raw);
+
+          // Contar tarefas completas e pendentes
+          const labels = ['Completo', 'Pendente'];
+          const values = [
+            raw.filter(i => i.complete).length,
+            raw.filter(i => !i.complete).length
+          ];
+
+          new Chart(document.getElementById('acquisitions'), {
+            type: 'doughnut',
+            data: {
+              labels: labels,
+              datasets: [{
+                label: 'Estado das Tarefas',
+                data: values,
+                backgroundColor: [
+                'rgb(206, 219, 140)',  
+                'rgb(245, 187, 120)'   
+              ],
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: {
+                  position: 'bottom'
+                }
+              }
+            }
+          });
+
+        } catch (error) {
+          console.error("Erro ao gerar gráfico:", error);
+        }
+      })();
+    </script>
+    
+  {% else %}
+    <h2>Faz agora o Login!</h2>
+  {% endif %}
+{% endblock %}

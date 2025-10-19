@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Registar{% endblock %}
+
+{% block head_extra %}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="card">
+      <div class="card-header">Criar Conta</div>
+      <div class="card-body">
+        <form id="registerForm">
+          <div class="form-group">
+            <label for="username">Utilizador</label>
+            <input type="text" id="username" name="username" required placeholder="Nome de utilizador">
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required placeholder="exemplo@email.com">
+          </div>
+          <div class="form-group">
+            <label for="first_name">Nome</label>
+            <input type="text" id="first_name" name="first_name" required>
+          </div>
+          <div class="form-group">
+            <label for="last_name">Apelido</label>
+            <input type="text" id="last_name" name="last_name" required>
+          </div>
+          <div class="form-group">
+            <label for="password">Palavra-passe</label>
+            <input type="password" id="password" name="password" required placeholder="••••••••">
+          </div>
+          <div class="form-group">
+          </div>
+          <button type="submit">Registar</button>
+        </form>
+        <div id="msg" style="margin-top:15px; font-size:0.95rem;"></div>
+      </div>
+ 
+    </div>
+
+         <div class="card-footer">
+        <small>Já tens conta? <a href="{{ url_for('loginpage') }}">Entra aqui</a>.</small>
+      </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  $("#registerForm").on("submit", function (e) {
+    e.preventDefault();
+    const payload = {
+      username: $("#username").val(),
+      email: $("#email").val(),
+      first_name: $("#first_name").val(),
+      last_name: $("#last_name").val(),
+      password: $("#password").val(),
+      role: "user"
+    };
+    $("#msg").css("color", "#665c4d").text("A criar conta...");
+
+    $.ajax({
+      url: "{{ url_for('create_user') }}",
+      type: "POST",
+      data: JSON.stringify(payload),
+      contentType: "application/json",
+      success: function () {
+        $("#msg").css("color", "green").text("Conta criada com sucesso! A redirecionar...");
+        setTimeout(() => window.location.href = "{{ url_for('loginpage') }}", 1200);
+      },
+      error: function (xhr) {
+        let msg = "Erro ao criar conta.";
+        if (xhr.responseJSON?.detail) msg = xhr.responseJSON.detail;
+        $("#msg").css("color", "darkred").text(msg);
+      }
+    });
+  });
+</script>
+{% endblock %}

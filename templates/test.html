@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kanban Board</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background-color: #f0f0f0;
+    }
+
+    .kanban-board {
+      display: flex;
+      gap: 20px;
+    }
+
+    .kanban-list {
+      list-style: none;
+      padding: 10px;
+      width: 250px;
+      min-height: 300px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .kanban-list h2 {
+      margin-top: 0;
+    }
+
+    .kanban-item {
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #e0e0ff;
+      border-radius: 4px;
+      cursor: grab;
+    }
+
+    .kanban-item:active {
+      cursor: grabbing;
+    }
+  </style>
+</head>
+<body>
+  <div class="kanban-board ">
+    <ul class="kanban-list firstDrop" id="todo-list">
+      <li class="kanban-item draggable" data-id="0">Schedule perm</li>
+      <li class="kanban-item draggable" data-id="0">Rewind VHS tapes</li>
+      <li class="kanban-item draggable" data-id="0">Make change for the arcade</li>
+      <li class="kanban-item draggable" data-id="0">Get disposable camera developed</li>
+      <li class="kanban-item draggable" data-id="0">Learn C++</li>
+      <li class="kanban-item draggable" data-id="0">Return Nintendo Power Glove</li>
+    </ul>
+
+    <ul class="kanban-list dropTarget" id="done-list">
+      <li class="kanban-item draggable">Pickup new mix-tape from Beth</li>
+    </ul>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.17/dist/interact.min.js"></script>
+  <script>
+
+    $(document).ready(function(){
+      $('.bar').click(function(){
+          $(this).fadeOut();
+      });
+    });
+
+
+const positions = new Map();
+const locked = new Map();
+
+    interact('.draggable').draggable({
+    listeners: {
+        move(event) {
+
+        //vai ser a chave usada no get
+        const target = event.target;
+        //tentamos procurar x e y do target
+        let pos = positions.get(target) || { x: 0, y: 0 };
+       
+        //Você arrasta mais -3px para a esquerda e 7px para baixo.
+        //event.dx = -3
+        //event.dy = 7
+        pos.x += event.dx;
+        pos.y += event.dy;
+
+        const id = event.target.id;
+
+        target.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+        positions.set(target, pos);
+        }
+    }
+    });
+
+    interact('.firstDrop').dropzone({
+      accept: '.draggable',
+      overlap: 0.5,
+      ondrop: function(event){
+        const arrastar = event.relatedTarget;
+        const destino = event.target;
+        const id = $(arrastar).data('id');
+       
+        console.log("ID1: " + id);
+       
+        arrastar.style.transform = 'none';
+        arrastar.style.position = 'relative';
+
+        destino.appendChild(arrastar);
+        interact(arrastar).draggable(false);
+
+        positions.set(arrastar, { x: 0, y: 0 });
+
+        //locked.set(arrastar, true)
+
+      }
+
+    });
+
+    interact('.dropTarget').dropzone({
+        accept: '.draggable',
+        overlap: 0.5,
+        ondrop: function(event) {
+            const draggable = event.relatedTarget;
+            const dropzone = event.target;
+            const id = $(draggable).data('id');
+
+            console.log("ID " + id);
+
+            draggable.style.transform = 'none';
+            draggable.style.position = 'relative';
+
+            dropzone.appendChild(draggable);
+     
+            positions.set(draggable, { x: 0, y: 0 });
+
+            //locked.set(draggable, true);
+           
+        }
+    })
+
+  </script>
+
+</body>
+</html>
+
+

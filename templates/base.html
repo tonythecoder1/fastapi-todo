@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{% block title %}Minha App{% endblock %}</title>
+
+  <!-- CSS principal -->
+  <link rel="stylesheet" href="{{ url_for('static', path='css/base.css') }}?v=9999">
+
+  <style>
+
+
+    .kanban-board {
+      display: flex;
+      gap: 20px;
+    }
+
+    .kanban-list {
+      list-style: none;
+      padding: 10px;
+      width: 250px;
+      min-height: 300px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .kanban-list h2 {
+      margin-top: 0;
+    }
+
+    .kanban-item {
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #e0e0ff;
+      border-radius: 4px;
+      cursor: grab;
+    }
+
+    .kanban-item:active {
+      cursor: grabbing;
+    }
+  </style>
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-inner">
+      <a class="brand" href="{{ url_for('index') }}">Tasks</a>
+      <ul class="nav-links">
+          {% if user %}
+        <li class="muted">Olá <strong>{{user.username}}</strong></li>
+        {% endif %}
+        <li><a href="{{ url_for('todos_page') }}">Tarefas</a></li>
+        {% if user %}
+          <li><a href="{{ url_for('logout') }}">Logout</a></li>
+        {% else %}
+        {% if not login_page_on  %}
+          <li><a href="">Login</a></li>
+          <li><a href="{{ url_for('register')}}">Registar</a></li>
+          {% endif %}
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Conteúdo -->
+  <main class="app-shell">
+    {% block content %}{% endblock %}
+  </main>
+
+  {% block scripts %}{% endblock %}
+
+  <script>
+
+    
+  </script>
+</body>
+</html>

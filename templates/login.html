@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Login{% endblock %}
+
+{% block head_extra %}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="card">
+      <div class="card-header">Login</div>
+      <div class="card-body">
+        <form id="loginForm">
+          <div class="form-group">
+            <label for="username">Utilizador</label>
+            <input type="text" id="username" name="username" required autocomplete="username" placeholder="Insere o teu utilizador">
+          </div>
+          <div class="form-group">
+            <label for="password">Palavra-passe</label>
+            <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••">
+          </div>
+          <button type="submit">Entrar</button>
+        </form>
+        <div id="msg" style="margin-top:15px; font-size:0.95rem;"></div>
+      </div>
+      <div class="card-footer">
+        <small>Esqueceste a palavra-passe? Contacta o suporte.</small><br>
+        <a href="{{ url_for('register') }}" class="link-register">Cria uma aqui</a>.
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  $("#loginForm").on("submit", function (e) {
+    e.preventDefault();
+    const username = $("#username").val().trim();
+    const password = $("#password").val().trim();
+    $("#msg").css("color", "#665c4d").text("A validar...");
+
+    $.ajax({
+      url: "{{ url_for('login') }}",
+      type: "POST",
+      data: $.param({ username, password }),
+      contentType: "application/x-www-form-urlencoded",
+      success: function (response) {
+        localStorage.setItem("access_token", response.access_token);
+        $("#msg").css("color", "green").text("Login efetuado com sucesso!");
+        setTimeout(() => window.location.href = "{{ url_for('index') }}", 1200);
+      },
+      error: function (xhr) {
+        let msg = "Falha no login.";
+        if (xhr.responseJSON?.detail) msg = xhr.responseJSON.detail;
+        $("#msg").css("color", "darkred").text(msg);
+      }
+    });
+  });
+</script>
+{% endblock %}

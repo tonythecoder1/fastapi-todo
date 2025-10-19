@@ -1,0 +1,503 @@
+{% extends "base.html" %}
+{% block title %}Tarefas{% endblock %}
+
+{% block content %}
+  <header class="app-header">
+    <div class="app-shell">
+      <h1 class="page-title">As tuas Tarefas</h1>
+      <div class="user-chip">Olá, <strong>{{ user.username }}</strong> • tens <span>{{ todos|length }}</span> tarefas</div>
+    </div>
+  </header>
+
+  <div id="d-priority" class="priority-box">
+    <div class="priority-header">
+      <span class="pill">Prioridades de 1 a 5</span>
+    </div>
+    <br>
+    <small class="priority-desc">
+      <strong>1</strong> — Muito Baixa &nbsp;•&nbsp;
+      <strong>2</strong> — Baixa &nbsp;•&nbsp;
+      <strong>3</strong> — Normal &nbsp;•&nbsp;
+      <strong>4</strong> — Alta &nbsp;•&nbsp;
+      <strong>5</strong> — Muito Alta
+    </small>
+  </div>
+
+  <br>
+  <!-- FIX: HTML do botão estava com vírgula fora do lugar -->
+  <a href="#" class="btn-giant add-btn" style="background-color:darkorange; border-color:beige;">Nova Tarefa +</a>
+  <br>
+
+  {% if todos %}
+      <div class="kanban-board ">
+       
+     <ul class="kanban-list firstDrop" id="todo-list">
+       <p><strong>Not Completed Tasks</strong></p>
+  {% for task in todos if not task.complete %}
+    <li class="kanban-item draggable"
+        data-id="{{ task.id }}"
+        data-complete="{{ task.complete | lower }}"
+        data-title="{{ task.title | e }}"
+        data-description="{{ (task.description or '') | e }}"
+        data-priority="{{ task.priority }}">
+      {{ task.title }}
+    </li>
+  {% endfor %}
+</ul>
+
+<ul class="kanban-list dropTarget" id="done-list">
+  <p><strong>Completed Tasks</strong></p>
+  {% for tsk in todos if tsk.complete %}
+    <li class="kanban-item draggable"
+        data-id="{{ tsk.id }}"
+        data-complete="{{ tsk.complete | lower }}"
+        data-title="{{ tsk.title | e }}"
+        data-description="{{ (tsk.description or '') | e }}"
+        data-priority="{{ tsk.priority }}">
+      {{ tsk.title }}
+    </li>
+  {% endfor %}
+    </ul>
+  </div>
+
+  {% endif %}
+
+
+  {% if todos %}
+    <section class="cards">
+      {% for t in todos %}
+        <article class="card-xl {% if t.complete %}is-done{% endif %}">
+          <div class="card-xl-body">
+            <div class="card-xl-top">
+              <h2 class="todo-title">{{ loop.index }} - {{ t.title }}</h2>
+              <span class="pill">P{{ t.priority }}</span>
+            </div>
+            <p class="todo-desc">{{ t.description or "Sem descrição" }}</p>
+            <div class="meta-row">
+
+              <a href="#"
+                style="
+                    display:inline-block;
+                    padding:8px 14px;
+                    font-weight:700;
+                    font-size:0.9rem;
+                    letter-spacing:0.03em;
+                    color:#fff;
+                    background-color: darkorange;
+                    border:1px solid #d1c9bf;
+                    border-radius:8px;
+                    text-decoration:none;
+                    cursor:pointer;
+                    transition:background 0.15s ease, transform 0.05s ease;"
+                 class="btn-giant edit-btn"
+                 data-id="{{ t.id }}"
+                 data-title="{{ t.title|e }}"
+                 data-desc="{{ (t.description or '')|e }}"
+                 data-priority="{{ t.priority }}">
+                 EDITAR
+              </a>
+              {% if not t.complete %}
+                <a class="btn-complete", style="
+                    display:inline-block;
+                    padding:8px 14px;
+                    font-weight:700;
+                    font-size:0.9rem;
+                    letter-spacing:0.03em;
+                    color:#fff;
+                    background-color: rgb(55, 125, 55);
+                    border:1px solid #d1c9bf;
+                    border-radius:8px;
+                    text-decoration:none;
+                    cursor:pointer;
+                    transition:background 0.15s ease, transform 0.05s ease;"
+                    href="#"
+                    role="button"
+                    data-id="{{ t.id }}"
+                    data-title="{{ t.title|e }}"
+                    data-description="{{ (t.description or '')|e }}"
+                    data-priority="{{ t.priority }}">
+                    Completar
+                </a>
+              {% endif %}
+
+              <a class="btn-delete", style="
+                    display:inline-block;
+                    padding:8px 14px;
+                    font-weight:700;
+                    font-size:0.9rem;
+                    letter-spacing:0.03em;
+                    color:#fff;
+                    background-color: rgb(189, 65, 40);
+                    border:1px solid white;
+                    border-radius:8px;
+                    text-decoration:none;
+                    cursor:pointer;
+                    transition:background 0.15s ease, transform 0.05s ease;"
+                    href="#"
+                    role="button"
+                    data-id="{{ t.id }}"
+                    data-title="{{ t.title|e }}"
+                    data-description="{{ (t.description or '')|e }}"
+                    data-priority="{{ t.priority }}">
+                    Apagar
+                </a>
+            </div>
+          </div>
+
+          <span class="status {% if t.complete %}done{% else %}pending{% endif %}">
+            {% if t.complete %}Concluída ✔{% else %}Pendente..{% endif %}
+        </span>
+
+        </article>
+        
+      {% endfor %}
+    </section>
+  {% else %}
+    <p class="empty-xl">Nenhuma tarefa encontrada</p>
+  {% endif %}
+
+  <div id="editModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close" aria-label="Fechar">&times;</span>
+      <h2>Editar Tarefa</h2>
+
+      <form id="editForm">
+        <input type="hidden" id="task_id" name="id">
+
+        <label for="title">Título</label>
+        <input type="text" id="title" name="title" required>
+
+        <label for="description">Descrição</label>
+        <textarea id="description" name="description" rows="3"></textarea>
+
+        <label for="priority">Prioridade</label>
+        <select id="priority" name="priority">
+          <option value="1">1 - Muito Baixa</option>
+          <option value="2">2 - Baixa</option>
+          <option value="3">3 - Normal</option>
+          <option value="4">4 - Alta</option>
+          <option value="5">5 - Muito Alta</option>
+        </select>
+
+        <label for="completed">Estado da tarefa</label>
+        <select id="completed" name="completed">
+            <option value="true">Completada</option>
+            <option value="false">Não completada</option>
+        </select>
+        <button type="submit" class="btn-giant">Guardar Alterações</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: Criar -->
+  <div id="newTodoModal" class="modal" role="dialog" aria-labelledby="newTodoTitle" aria-modal="true" style="display:none;">
+    <div class="modal-content">
+      <span class="close" aria-label="Fechar">&times;</span>
+      <h2 id="newTodoTitle">Nova Tarefa</h2>
+
+      <form id="newTodoForm">
+        <label for="new_title">Título</label>
+        <input type="text" id="new_title" name="title" required placeholder="Ex.: Comprar café">
+
+        <label for="new_description">Descrição</label>
+        <textarea id="new_description" name="description" rows="3" placeholder="Detalhes da tarefa (opcional)"></textarea>
+
+        <label for="new_priority">Prioridade</label>
+        <select id="new_priority" name="priority" required>
+          <option value="1">1 - Muito Baixa</option>
+          <option value="2">2 - Baixa</option>
+          <option value="3" selected>3 - Normal</option>
+          <option value="4">4 - Alta</option>
+          <option value="5">5 - Muito Alta</option>
+        </select>
+
+        <button type="submit" class="btn-giant">Criar Tarefa</button>
+      </form>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/interactjs@1.10.17/dist/interact.min.js"></script>
+
+<script>
+
+const positions = new Map();
+
+
+$(document).on("click", ".kanban-item", function(e){
+
+  const $item = $(this);
+
+  $("#task_id").val($item.data('task_id'));
+  $("#title").val($item.data('title'));
+  $("#description").val($item.data('description'));
+  $("#priority").val($item.data('priority'));
+  $("#completed").val($item.data('completed'));
+
+  const id = $item.data("id");
+  const updateUrl = `/todos/update-todos/${id}`;
+  $("#editModal").data("updateUrl", updateUrl);
+
+  $("#editModal").fadeIn(200);
+
+});
+
+interact('.draggable').draggable({
+  listeners: {
+      start(event){
+        event.target.dataset.dropped = "false";
+      },
+      move(event){
+          const target = event.target;
+          let pos = positions.get(target) || {x: 0, y:0};
+
+          pos.x += event.dx;
+          pos.y += event.dy;
+
+          target.style.transform = `translate(${pos.x}px, ${pos.y}px)`;
+          positions.set(target, pos);
+
+          const isComplete = target.dataset.complete;
+          if (target.dataset.complete === "true") {
+              console.log("True");
+          }else {
+              console.log("False");
+          }
+      },
+      end(event){
+        if(event.target.dataset.dropped ==="false"){
+            target = event.target;
+            target.style.transform = "none";
+            target.style.position = 'relative';
+
+            positions.set(target, {x: 0, y: 0})
+        }
+      }
+  }
+});
+
+interact('.dropTarget').dropzone({
+  accept: '.draggable',
+  overlap: 0.5,
+  ondrop: function(event){
+    const objeto_arrastar = event.relatedTarget;
+    const destino = event.target;
+    const id = $(objeto_arrastar).data('id');
+
+    objeto_arrastar.style.transform = 'none';
+    objeto_arrastar.style.position = 'relative';
+
+    destino.appendChild(objeto_arrastar);
+    interact(objeto_arrastar).draggable(false);
+    event.relatedTarget.dataset.dropped = "true";
+
+    positions.set(objeto_arrastar, {x: 0, y: 0});
+
+    const payload = {
+      title: $(objeto_arrastar).data('title'),
+      description: String($(objeto_arrastar).data('description') || '123'),
+      priority: $(objeto_arrastar).data('priority'),
+      complete: true
+    };
+
+    $.ajax({
+          url: `/todos/update-todos/${id}`,
+          method: "PUT",
+          contentType: "application/json",
+          data: JSON.stringify(payload),
+          success(){
+
+          },
+          error(xhr){
+              console.log("STATUS", xhr.status);
+              console.log("RESPONSE TEXT", xhr.responseText);        
+              console.log("RESPONSE JSON", xhr.responseJSON);       
+    alert(xhr.responseJSON?.detail || "Erro ao atualizar tarefa.");
+          }
+    });
+}});
+
+interact('.firstDrop').dropzone({
+  accept: '.draggable',
+  overlap: 0.5,
+  ondrop: function(event){
+    const objeto_arrastar = event.relatedTarget;
+    const destino = event.target;
+    const id = $(objeto_arrastar).data('id');
+
+    objeto_arrastar.style.transform = 'none';
+    objeto_arrastar.style.position = 'relative';
+
+    destino.appendChild(objeto_arrastar);
+    interact(objeto_arrastar).draggable(false);
+    event.relatedTarget.dataset.dropped = "true";
+
+    positions.set(objeto_arrastar, {x: 0, y: 0});
+
+    const payload = {
+      title: $(objeto_arrastar).data('title'),
+      description: String($(objeto_arrastar).data('description') || '123'),
+      priority: $(objeto_arrastar).data('priority'),
+      complete: false
+    };
+
+    $.ajax({
+          url: `/todos/update-todos/${id}`,
+          method: "PUT",
+          contentType: "application/json",
+          data: JSON.stringify(payload),
+          success(){
+        },
+          error(xhr){
+              console.log("STATUS", xhr.status);
+              console.log("RESPONSE TEXT", xhr.responseText);        
+              console.log("RESPONSE JSON", xhr.responseJSON);       
+    alert(xhr.responseJSON?.detail || "Erro ao atualizar tarefa.");
+          }
+    });
+  }
+
+});
+
+$(function(){
+  /* -------- NOVA TAREFA -------- */
+  $(document).on("click", ".add-btn", function(e){
+    e.preventDefault();
+    $("#newTodoForm")[0].reset();
+    $("#newTodoModal").fadeIn(200);
+  });
+
+  $("#newTodoModal .close").on("click", function(){ $("#newTodoModal").fadeOut(200); });
+  $("#newTodoModal").on("click", function(e){ if (e.target === this) $(this).fadeOut(200); });
+
+  $("#newTodoForm").on("submit", function (e) {
+    e.preventDefault();
+
+    const payload = {
+      title: $("#new_title").val().trim(),
+      description: ($("#new_description").val() || "").trim() || null,
+      priority: parseInt($("#new_priority").val(), 10),
+      complete: false
+    };
+
+    $.ajax({
+      url: "{{ url_for('todo_create') }}",   
+      method: "POST",
+      contentType: "application/json",
+      data: JSON.stringify(payload),
+      success() {
+        $("#newTodoModal").fadeOut(200);
+        location.reload();
+      },
+      error(xhr) {
+        alert(xhr.responseJSON?.detail || xhr.responseText || "Erro ao criar tarefa.");
+      }
+    });
+  });
+
+
+  /* -------- EDITAR TAREFA -------- */
+  $(document).on("click", ".edit-btn", function(e){
+    e.preventDefault();
+    const $btn = $(this);
+
+    $("#task_id").val($btn.data("id"));
+    $("#title").val($btn.data("title"));
+    $("#description").val($btn.data("desc"));
+    $("#priority").val($btn.data("priority"));
+
+    const id = $btn.data("id");
+    const updateUrl = `/todos/update-todos/${id}`;
+    $("#editModal").data("updateUrl", updateUrl).fadeIn(200);
+  });
+
+  // fechar só o modal "editar"
+  $("#editModal .close").on("click", function(){ $("#editModal").fadeOut(200); });
+  $("#editModal").on("click", function(e){ if (e.target === this) $(this).fadeOut(200); });
+
+  $("#editForm").on("submit", function(e){
+    e.preventDefault();
+
+    const id = $("#task_id").val(); 
+    const payload = {
+      title: $("#title").val(),
+      description: ($("#description").val() || "").trim() || null,
+      priority: parseInt($("#priority").val(), 10),
+      complete: $("#completed").val() === "true"
+    };
+
+    $.ajax({
+      url: $("#editModal").data("updateUrl") || `/todos/update-todos/${id}`,
+      method: "PUT",
+      contentType: "application/json",
+      data: JSON.stringify(payload),
+      success() {
+        $("#editModal").fadeOut(200);
+        location.reload();
+      },
+      error(xhr) {
+        alert(xhr.responseJSON?.detail || "Erro ao atualizar tarefa.");
+      }
+    });
+  });
+
+});
+
+$(document).on("click", ".btn-complete", function(e){
+    e.preventDefault();
+
+    const $btn = $(this)
+    const id = $btn.data("id")
+
+    const payload = {
+        title: $btn.data("title"),
+        description: ($btn.data("desc") || "").trim() || null,
+        priority: parseInt($btn.data("priority"), 10),
+        complete: true
+    };
+
+    $.ajax({
+        url: $("#editModal").data("updateUrl") || `/todos/update-todos/${id}`,
+        method: "PUT",
+        contentType: "application/json",
+        data: JSON.stringify(payload),
+        success(){
+            const $card = $btn.closest("article.card-xl");
+            $card.addClass("is-done");
+            $card.find(".status").removeClass("pending").addClass("done").text("Concluída ✔");
+            $btn.remove()
+            // Esconde o botão completar
+        },
+        error(xhr) {
+            alert(xhr.responseJSON?.detail || "Erro ao atualizar tarefa.");
+        }
+    });
+});
+
+$(document).on("click",".btn-delete", function(e){
+    e.preventDefault(e);
+    const $btn = $(this);
+    const todo_id = $btn.data("id");
+
+    const confirm_delete = confirm("Tens a certeza que queres eliminar esta tarefa ?");
+    if(!confirm_delete){
+        return;
+    }
+
+    $.ajax({
+        url: `/todos/del-todo/${todo_id}`,
+        method: "DELETE",
+        contentType: "application/json",
+        success(){
+            location.reload();
+        },
+        error(xhr) {
+            alert(xhr.responseJSON?.detail || "Erro ao eliminar tarefa.");
+        }
+    });
+});
+
+</script>
+{% endblock %}

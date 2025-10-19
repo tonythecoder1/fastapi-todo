@@ -1,0 +1,329 @@
+/* ===========================
+   SAVANA WARM — minimal premium quente
+   =========================== */
+
+:root{
+  /* base quente e elegante */
+  --bg:#f9f5ef;                 /* fundo areia clara */
+  --ink:#2a2016;                /* texto escuro quente */
+  --muted:#7a6a58;              /* texto secundário */
+  --line:#e2d5c3;               /* linhas em tom bege */
+  --card:#fffdf9;               /* cartões suaves */
+
+  /* acentos quentes e sofisticados */
+  --warm:#c58a3c;               /* dourado-terra */
+  --warm-2:#a16b2b;             /* hover mais escuro */
+  --accent-bg:#fff8ef;          /* destaque claro */
+
+  --radius:6px;
+}
+
+
+.kanban-item { border-radius: 8px; padding: 8px 10px; margin: 6px 0; }
+
+.priority-1 { background:#eef7ff; color:#002b3d; }
+.priority-2 { background:#d8efff; color:#00324a; }
+.priority-3 { background:#ffd27a; color:#3a2a00; }
+.priority-4 { background:#ffab66; color:#3a1600; }
+.priority-5 { background:#ff7a7a; color:#3a0000; }
+
+
+*{ box-sizing:border-box }
+html,body{ height:100% }
+body{
+  margin:0;
+  font-family:"Inter","Poppins","Segoe UI",sans-serif;
+  color:var(--ink);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased; 
+  -moz-osx-font-smoothing:grayscale;
+}
+a{ color:inherit; text-decoration:none }
+
+.app-shell{ max-width:1100px; margin:0 auto; padding:28px 16px }
+
+/* ===========================
+   NAVBAR — elegante e quente
+   =========================== */
+.navbar{
+  position:sticky; top:0; z-index:1000;
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+  backdrop-filter: saturate(120%) blur(6px);
+}
+.nav-inner{
+  max-width:1100px; margin:0 auto; padding:18px 16px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.brand{
+  font-family:"Playfair Display",serif;
+  font-size:1.5rem; font-weight:600; color:var(--ink);
+  letter-spacing:.5px;
+}
+.nav-links{
+  list-style:none; display:flex; gap:22px; align-items:center; margin:0; padding:0;
+}
+.nav-links a{
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-size:.78rem; font-weight:600;
+  padding:4px 0; position:relative;
+}
+.nav-links a::after{
+  content:""; position:absolute; left:0; bottom:-8px; height:1px; width:0;
+  background:var(--warm); transition:width .18s ease;
+}
+.nav-links a:hover::after{ width:100% }
+.nav-links a:hover{ color:var(--warm-2) }
+.nav-links .muted{ color:var(--muted); text-transform:none; letter-spacing:0; font-weight:500 }
+
+/* ===========================
+   HEADER — toque editorial
+   =========================== */
+.app-header{
+  background:var(--bg);
+  border-bottom:1px solid var(--line);
+}
+.page-title{
+  margin:0; font-size:2rem; font-weight:700; letter-spacing:.02em;
+  color:var(--ink);
+  font-family:"Playfair Display",serif;
+}
+.user-chip{ margin-top:6px; color:var(--muted); font-weight:600; font-size:.95rem }
+.user-chip span{
+  border:1px solid var(--line); padding:2px 10px; border-radius:999px; background:var(--accent-bg);
+}
+
+/* ===========================
+   GRID & CARDS — minimal quente
+   =========================== */
+.cards{
+  display:grid; grid-template-columns:repeat(12,1fr);
+  gap:24px; margin-top:18px;
+}
+.card-xl{
+  grid-column:span 12;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  transition:border-color .15s ease;
+}
+.card-xl:hover{ border-color:var(--warm); }
+@media (min-width:900px){ .card-xl{ grid-column:span 6 } }
+@media (min-width:1280px){ .card-xl{ grid-column:span 4 } }
+.card-xl-body{ padding:20px }
+.card-xl-top{
+  display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:10px;
+}
+.todo-title{ margin:0; font-size:1.15rem; font-weight:700; letter-spacing:.01em; color:var(--ink); }
+.pill{
+  border:1px solid var(--line);
+  border-radius:999px; padding:4px 10px;
+  font-weight:700; font-size:.82rem; color:#4a3a25; background:#fffaf3;
+}
+.todo-desc{ margin:10px 0 14px; font-size:1rem; color:#3a2f23; }
+.meta-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:4px }
+.status{ font-weight:700; font-size:.92rem }
+.status.done{ color:#3f7a34 }
+.status.pending{ color:#b4662e }
+
+/* ===========================
+   BUTTONS — preto & dourado-terra
+   =========================== */
+
+   .btn-complete {
+  display: inline-block;
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.03em;
+  color: #fff;
+  background: var(--warm);
+  border: 1px solid var(--warm-2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
+}
+
+.btn-complete:hover {
+  background: var(--warm-2);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.btn-complete:active {
+  transform: translateY(1px);
+}
+
+
+.btn-giant{
+  display:inline-block; padding:12px 18px;
+  font-weight:800; font-size:.95rem; letter-spacing:.06em; 
+  color:#fff; background:var(--warm);
+  border:1px solid var(--warm-2);
+  border-radius:8px; transition:background .15s ease, transform .05s ease;
+}
+.btn-giant:hover{ background:var(--warm-2); }
+.btn-giant:active{ transform:translateY(1px) }
+
+.actions-row{ margin-top:22px; display:flex; justify-content:center }
+.btn-outline{
+  display:inline-block; padding:10px 16px; font-weight:700; letter-spacing:.04em;
+  color:var(--ink); background:transparent;
+  border:1.5px solid var(--warm); border-radius:8px;
+  transition: color .15s ease, border-color .15s ease, transform .05s ease, background .15s ease;
+}
+.btn-outline:hover{
+  background:rgba(197,138,60,.1); border-color:var(--warm-2); color:var(--warm-2);
+}
+.btn-outline:active{ transform:translateY(1px) }
+
+/* ===========================
+   EMPTY — fio leve quente
+   =========================== */
+.empty-xl{
+  text-align:center; font-size:1rem; color:var(--muted);
+  border:1px dashed var(--line); border-radius:8px; padding:18px; margin-top:16px;
+  background:var(--accent-bg);
+}
+
+/* ===========================
+   PRIORIDADE — borda fina areia
+   =========================== */
+#d-priority.priority-box{
+  border:1px dashed var(--line);
+  border-radius:8px; padding:10px 12px; background:var(--accent-bg);
+}
+
+/* ===========================
+   FORMS — foco dourado quente
+   =========================== */
+.container{ max-width:520px; margin:30px auto; padding:0 16px }
+.card{ background:var(--card); border:1px solid var(--line); border-radius:8px }
+.card-header{ padding:12px 16px; border-bottom:1px solid var(--line); font-weight:700; color:var(--ink); }
+.card-body{ padding:16px }
+.card-footer{ padding:12px 16px; border-top:1px solid var(--line); color:var(--muted); font-size:.9rem }
+
+.form-group{ margin-bottom:12px }
+label{ display:block; font-weight:600; margin-bottom:6px; letter-spacing:.02em; color:var(--ink); }
+input[type="text"], input[type="email"], input[type="password"], select{
+  width:100%; padding:11px 12px;
+  border:1px solid var(--line); border-radius:8px; background:#fff; color:var(--ink);
+  transition:border-color .12s ease, box-shadow .12s ease;
+}
+input:focus, select:focus{
+  border-color:var(--warm);
+  box-shadow:0 0 0 3px rgba(197,138,60,.25);
+}
+button[type="submit"]{
+  width:100%; padding:12px 14px; cursor:pointer;
+  color:#fff; font-weight:800; letter-spacing:.06em;
+  border:1px solid var(--warm-2); border-radius:8px; background:var(--warm);
+  transition:background .15s ease, transform .05s ease;
+}
+button[type="submit"]:hover{ background:var(--warm-2); }
+button[type="submit"]:active{ transform:translateY(1px) }
+
+
+/* ===== MODAL SAVANA ===== */
+.modal {
+  display: none; /* escondido por padrão */
+  position: fixed;
+  z-index: 2000;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.4);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: var(--card);
+  margin: 10% auto;
+  padding: 24px 28px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  max-width: 480px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  animation: fadeIn .25s ease;
+}
+
+.close {
+  float: right;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--muted);
+  cursor: pointer;
+}
+.close:hover { color: var(--warm-2); }
+
+.modal-content h2 {
+  margin-top: 0;
+  font-family: "Playfair Display", serif;
+  font-weight: 600;
+  color: var(--ink);
+  margin-bottom: 14px;
+}
+
+.modal-content form label {
+  display: block;
+  margin-top: 10px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.modal-content input,
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  padding: 10px 12px;
+  margin-top: 4px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--ink);
+}
+.modal-content button {
+  margin-top: 18px;
+  width: 100%;
+}
+
+    .kanban-board {
+      display: flex;
+      gap: 20px;
+    }
+
+    .kanban-list {
+      list-style: none;
+      padding: 10px;
+      width: 250px;
+      min-height: 300px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+
+    .kanban-list h2 {
+      margin-top: 0;
+    }
+
+    .kanban-item {
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #e0e0ff;
+      border-radius: 4px;
+      cursor: grab;
+    }
+
+    .kanban-item:active {
+      cursor: grabbing;
+    }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+
+/* Acessibilidade */
+@media (prefers-reduced-motion: reduce){
+  *{ animation:none !important; transition:none !important }
+}
