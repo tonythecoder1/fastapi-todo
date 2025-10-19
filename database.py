@@ -1,17 +1,22 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 import re
+import os
 
 
 #DATABASE_URL = "postgresql+asyncpg://postgres:12345678@localhost:5432/todo"
 
-raw_url = "postgresql+asyncpg://postgres:Tonyfiby16@db.wghpvhftdrrkfrnhzkfp.supabase.co:5432/postgres?sslmode=require"
-DATABASE_URL = re.sub(r"sslmode=require", "ssl=require", raw_url)
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+if not DATABASE_URL:
+    raise RuntimeError("No DATABASE URL ENV")
 
 
 engine = create_async_engine(
     DATABASE_URL,
-    echo=True
+    connect_args={"ssl": True},
+    echo=True,
+    pool_pre_ping=True
 )
 
 AsyncSessionLocal = sessionmaker(
