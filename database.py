@@ -13,7 +13,6 @@ if not DATABASE_URL:
 
 engine = create_async_engine(
     DATABASE_URL,
-    connect_args={"ssl": True},  
     pool_pre_ping=True,
     echo=False,
 )
